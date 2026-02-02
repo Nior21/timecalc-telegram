@@ -1,3 +1,5 @@
 /.history
 /.env
 /.temp-tree-view
+/node_modules
+/package-lock.json
