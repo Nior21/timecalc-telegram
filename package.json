@@ -1,0 +1,20 @@
+{
+    "name": "timecalc-telegram-bot",
+    "version": "1.0.0",
+    "description": "Telegram бот TimeCalc - калькулятор времени",
+    "main": "bot.js",
+    "scripts": {
+        "start": "node bot.js",
+        "dev": "nodemon bot.js"
+    },
+    "dependencies": {
+        "node-telegram-bot-api": "^0.61.0",
+        "express": "^4.18.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    }
+}

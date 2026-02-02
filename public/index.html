@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TimeCalc</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Segoe UI Emoji', sans-serif;
+            font-size: 15px;
+            line-height: 1.4;
+            color: #212121;
+            background: #ffffff;
+            width: 100%;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            padding: 16px;
+            max-width: 100%;
+        }
+
+        /* HEADER */
+        .header {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a73e8;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #5f6368;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        #timeInput {
+            width: 100%;
+            padding: 14px 50px 14px 16px;
+            border: 2px solid #dadce0;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #f8f9fa;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        #timeInput:focus {
+            outline: none;
+            border-color: #1a73e8;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            color: #5f6368;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .input-icon:hover {
+            color: #1a73e8;
+        }
+
+        .clear-icon {
+            right: 42px;
+        }
+
+        .input-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        /* STATUS */
+        .status-message {
+            font-size: 13px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.3s;
+        }
+
+        .status-success {
+            background-color: #e6f4ea;
+            color: #137333;
+            border: 1px solid #b7e1cd;
+        }
+
+        .status-error {
+            background-color: #fce8e6;
+            color: #c5221f;
+            border: 1px solid #f5c0b8;
+        }
+
+        .status-icon {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* OUTPUT SECTION */
+        .output-section {
+            margin-bottom: 24px;
+        }
+
+        .output-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .output-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .output-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: #1a73e8;
+        }
+
+        .output-card:nth-child(2):before {
+            background: #ea4335;
+        }
+
+        .output-card:nth-child(3):before {
+            background: #34a853;
+        }
+
+        .output-card:nth-child(4):before {
+            background: #fbbc04;
+        }
+
+        .output-card:nth-child(5):before {
+            background: #a142f4;
+        }
+
+        .output-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .output-label {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 6px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .output-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #202124;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-icon {
+            font-size: 14px;
+            color: #5f6368;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .output-card:active .copy-icon {
+            opacity: 1;
+        }
+
+        .output-value.copied .copy-icon {
+            color: #34a853;
+        }
+
+        /* EXAMPLES SECTION */
+        .examples-section {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 20px;
+        }
+
+        .examples-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .examples-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        .toggle-icon {
+            width: 20px;
+            height: 20px;
+            color: #5f6368;
+            transition: transform 0.3s;
+        }
+
+        .examples-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+            max-height: 500px;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .examples-section.collapsed .examples-grid {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+        }
+
+        .example-item {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+            font-size: 13px;
+            border-left: 3px solid #1a73e8;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            -webkit-touch-callout: none;
+        }
+
+        .example-item:active {
+            background-color: #e8f0fe;
+            transform: scale(0.98);
+        }
+
+        .example-hint {
+            font-size: 12px;
+            color: #5f6368;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* HELP BUTTON */
+        .help-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: #1a73e8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+            transition: all 0.2s;
+            border: none;
+            z-index: 100;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .help-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 6px rgba(26, 115, 232, 0.3);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #fbbc04;
+        }
+
+        .modal-header h3 {
+            color: #1a73e8;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #5f6368;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            padding: 0;
+        }
+
+        .modal-close:active {
+            background-color: #f8f9fa;
+        }
+
+        .modal-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-section {
+            margin-bottom: 18px;
+            padding: 14px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #fbbc04;
+        }
+
+        .modal-section h4 {
+            color: #1a73e8;
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .modal-list {
+            list-style-type: none;
+            padding-left: 5px;
+        }
+
+        .modal-list li {
+            margin-bottom: 8px;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .modal-list li:before {
+            content: '•';
+            color: #1a73e8;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #e8f0fe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #1a73e8;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 480px) {
+            .container {
+                padding: 14px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            #timeInput {
+                font-size: 15px;
+                padding: 12px 46px 12px 14px;
+            }
+
+            .input-icon {
+                width: 20px;
+                height: 20px;
+                right: 12px;
+            }
+
+            .clear-icon {
+                right: 38px;
+            }
+
+            .output-card {
+                padding: 14px;
+            }
+
+            .output-value {
+                font-size: 17px;
+            }
+
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* TELEGRAM WEB APP SPECIFIC */
+        body.tg {
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #212121);
+        }
+
+        .tg .header h1 {
+            color: var(--tg-theme-button-color, #1a73e8);
+        }
+
+        .tg .output-card {
+            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            border-color: var(--tg-theme-hint-color, #e0e0e0);
+        }
+
+        .tg .help-button {
+            background: var(--tg-theme-button-color, #1a73e8);
+        }
+    </style>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TimeCalc</h1>
+            <p>Универсальный калькулятор времени</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-wrapper">
+                <input type="text" id="timeInput" placeholder="Пример: 09:00-11:30 + 45 мин" autocomplete="off">
+
+                <!-- Иконка очистки -->
+                <button class="input-icon clear-icon" id="clearBtn" title="Очистить" aria-label="Очистить поле ввода">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+
+                <!-- Иконка подсказки -->
+                <button class="input-icon" id="helpBtn" title="Подсказка" aria-label="Открыть подсказку">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div id="statusContainer" class="status-message" style="display: none;"></div>
+        </div>
+
+        <div class="output-section">
+            <div class="output-grid">
+                <div class="output-card">
+                    <div class="output-label">Часы и минуты</div>
+                    <div class="output-value" id="resultHoursMinutes">
+                        <span>0 ч 0 мин</span>
+                        <span class="copy-icon">📋</span>
+                    </div>
+                </div>
+                <div class="output-card">
+                    <div class="output-label">Десятичные (точка)</div>
+                    <div class="output-value" id="resultDecimalDot">
+                        <span>0.00</span>
+                        <span class="copy-icon">📋</span>
+                    </div>
+                </div>
+                <div class="output-card">
+                    <div class="output-label">Десятичные (запятая)</div>
+                    <div class="output-value" id="resultDecimalComma">
+                        <span>0,00</span>
+                        <span class="copy-icon">📋</span>
+                    </div>
+                </div>
+                <div class="output-card">
+                    <div class="output-label">Минуты</div>
+                    <div class="output-value" id="resultMinutes">
+                        <span>0</span>
+                        <span class="copy-icon">📋</span>
+                    </div>
+                </div>
+                <div class="output-card">
+                    <div class="output-label">Секунды</div>
+                    <div class="output-value" id="resultSeconds">
+                        <span>0</span>
+                        <span class="copy-icon">📋</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="examples-section" id="examplesSection">
+            <div class="examples-header" id="examplesToggle">
+                <h3>Примеры выражений</h3>
+                <svg class="toggle-icon" viewBox="0 0 24 24">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                </svg>
+            </div>
+            <div class="examples-grid" id="examplesGrid">
+                <div class="example-item">09:05-11:26</div>
+                <div class="example-item">12:24 + 17 мин</div>
+                <div class="example-item">01:30 + 35 мин</div>
+                <div class="example-item">02:35 + 1,35 ч</div>
+                <div class="example-item">8:30 - 0:45 + 1.25ч</div>
+                <div class="example-item">23:45-01:15</div>
+            </div>
+            <p class="example-hint">Нажмите на пример для вставки</p>
+        </div>
+
+        <!-- Плавающая кнопка помощи -->
+        <button class="help-button" id="floatingHelpBtn" aria-label="Помощь">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Модальное окно с подсказкой -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📋 Подсказка по форматам</h3>
+                <button class="modal-close" id="closeModal" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-section">
+                    <h4>📅 Диапазоны времени</h4>
+                    <ul class="modal-list">
+                        <li><code>09:05-11:26</code></li>
+                        <li><code>23:45-01:15</code> (ночной)</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h4>⏰ Форматы</h4>
+                    <ul class="modal-list">
+                        <li><code>09:05</code> или <code>9:5</code></li>
+                        <li><code>1.5ч</code> или <code>1,5 часа</code></li>
+                        <li><code>45 минут</code> или <code>30 мин</code></li>
+                        <li><code>2ч30мин</code> или <code>1ч15м</code></li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h4>➕ Операции</h4>
+                    <ul class="modal-list">
+                        <li><code>+</code> - сложение</li>
+                        <li><code>-</code> - вычитание</li>
+                        <li>Пример: <code>8:30 - 0:45 + 1.25ч</code></li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h4>💡 Подсказка</h4>
+                    <p>Расчет происходит автоматически. Нажмите на результат для копирования.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
